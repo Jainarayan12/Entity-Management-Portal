@@ -1,0 +1,263 @@
+export const entityFormFields = {
+  entityDetails: [
+    { key: 'eventDate', label: 'Event Date', type: 'date', isRequired: true },
+    { key: 'legalName', label: 'Legal Name', type: 'input', isRequired: true },
+    {
+      key: 'companyType',
+      label: 'Company Type',
+      type: 'input',
+      required: true,
+    },
+    { key: 'country', label: 'Country', type: 'select', isRequired: true },
+    {
+      key: 'geographicalZone',
+      label: 'Geographical Zone',
+      type: 'select',
+      isRequired: true,
+    },
+  ],
+  location: [
+    { key: 'country', label: 'Country', type: 'select', isRequired: true },
+    {
+      key: 'geographicalZone',
+      label: 'Geographical Zone',
+      type: 'select',
+      isRequired: true,
+    },
+  ],
+  organization: [
+    {
+      key: 'groupType',
+      label: 'Group/Non-Group',
+      type: 'select',
+      required: true,
+    },
+    {
+      key: 'operatingGroup',
+      label: 'Operating Group',
+      type: 'select',
+      isRequired: true,
+    },
+    {
+      key: 'businessActivity',
+      label: 'Business Activity',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select',
+      required: true,
+      isRequired: true,
+    },
+    {
+      key: 'statusEffectiveDate',
+      label: 'Status Effective Date',
+      type: 'date',
+      isRequired: true,
+    },
+    {
+      key: 'companyRegistrationNumber',
+      label: 'Company Registration Number',
+      type: 'input',
+      required: true,
+    },
+    {
+      key: 'otherIdentification1',
+      label: 'Other Identification 1',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'otherIdentification2',
+      label: 'Other Identification 2',
+      type: 'input',
+      isRequired: true,
+    },
+    { key: 'currency', label: 'Currency', type: 'select', required: true },
+    {
+      key: 'incorporationDate',
+      label: 'Incorporation Date',
+      type: 'date',
+      isRequired: true,
+    },
+    {
+      key: 'incorporationPlace',
+      label: 'Incorporation Place',
+      type: 'select',
+      required: true,
+    },
+    {
+      key: 'businessUnit',
+      label: 'Business Unit',
+      type: 'select',
+      isRequired: true,
+    },
+    {
+      key: 'subBusinessUnit',
+      label: 'Sub Business Unit',
+      type: 'select',
+      isRequired: true,
+    },
+    {
+      key: 'corpsecAgent',
+      label: 'Corpsec Agent/Service Provider/Others',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'executiveInCharge',
+      label: 'Executive In Charge',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'legalContact',
+      label: 'Legal Contact',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'contactPerson',
+      label: 'Contact Person',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'financialController',
+      label: 'Financial Controller',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'regionalFinanceHead',
+      label: 'Regional Finance Head',
+      type: 'input',
+      isRequired: true,
+    },
+    {
+      key: 'countryHead',
+      label: 'Country Head',
+      type: 'input',
+      isRequired: true,
+    },
+  ],
+  shareCertificate: [
+    {
+      key: 'shareCertificateNumber',
+      label: 'Certification No',
+      type: 'input',
+      isRequired: true,
+    },
+    { key: 'locality', label: 'Locality', type: 'input', isRequired: true },
+  ],
+  taxAudit: [
+    { key: 'taxNumber', label: 'Tax Number', type: 'input', isRequired: true },
+    {
+      key: 'externalTaxAdvisor',
+      label: 'External Tax Advisor',
+      type: 'input',
+      isRequired: true,
+    },
+    { key: 'dateOfAGM', label: 'Date Of AGM', type: 'date', isRequired: true },
+    {
+      key: 'dateOfLastFinancial',
+      label: 'Date Of Last Financial',
+      type: 'date',
+      isRequired: true,
+    },
+  ],
+};
+
+export const documentsSchema = [
+  { key: 'eventDate', label: 'Event Date', type: 'date' },
+  { key: 'documentTitle', label: 'Document Title', type: 'input' },
+  { key: 'documentCategory', label: 'Document Category', type: 'select' },
+  { key: 'documentType', label: 'Document Type', type: 'select' },
+  { key: 'author', label: 'Author', type: 'input' },
+  { key: 'documentStatus', label: 'Document Status', type: 'select' },
+  { key: 'version', label: 'Version', type: 'select' },
+  { key: 'expiryDate', label: 'Expiry Date', type: 'date' },
+  { key: 'upload', label: 'Upload Document', type: 'file' },
+];
+
+export const capitalShareFormFields = {
+  generalInfo: [
+    { key: 'eventDate', label: 'Event Date', type: 'date', required: true },
+    {
+      key: 'authorizedCapital',
+      label: 'Authorized Capital',
+      type: 'input',
+      required: true,
+    },
+    {
+      key: 'paidUpCapital',
+      label: 'Paid-Up Capital',
+      type: 'input',
+      required: true,
+    },
+  ],
+  shareType: [
+    {
+      key: 'transaction',
+      label: 'Transaction',
+      type: 'select',
+      required: true,
+    },
+    {
+      key: 'transactionType',
+      label: 'Transaction Type',
+      type: 'select',
+      required: true,
+    },
+    { key: 'shareType', label: 'Share Type', type: 'select', required: true },
+    {
+      key: 'sharesIssued',
+      label: 'Shares Issued',
+      type: 'input',
+      required: true,
+    },
+    {
+      key: 'votingRightsIssued',
+      label: 'Voting Rights Issued',
+      type: 'input',
+      required: true,
+    },
+    { key: 'parValueCheckbox', label: 'Par Value', type: 'checkbox' },
+    { key: 'nominalValueCheckbox', label: 'Nominal Value', type: 'checkbox' },
+    { key: 'parValue', label: 'Par Value', type: 'input', required: true },
+    {
+      key: 'nominalValue',
+      label: 'Nominal Value',
+      type: 'input',
+      required: true,
+    },
+    {
+      key: 'capitalShare',
+      label: 'Capital Share',
+      type: 'input',
+      required: true,
+    },
+    { key: 'currency', label: 'Currency', type: 'select', required: true },
+    { key: 'comments', label: 'Comments', type: 'input' },
+  ],
+  shareholderType: [
+    { key: 'shareType', label: 'Share Type', type: 'select', required: true },
+    {
+      key: 'subscriberType',
+      label: 'Subscriber Type',
+      type: 'select',
+      required: true,
+    },
+    { key: 'shareOwner', label: 'Share Owner', type: 'select', required: true },
+    {
+      key: 'subscribedAmount',
+      label: 'Subscribed Amount',
+      type: 'input',
+      required: true,
+    },
+    { key: 'vote', label: 'Vote', type: 'input', required: true },
+    { key: 'currency', label: 'Currency', type: 'select', required: true },
+  ],
+};
