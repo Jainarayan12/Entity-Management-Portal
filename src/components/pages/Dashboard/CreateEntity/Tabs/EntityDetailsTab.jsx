@@ -4,8 +4,14 @@ import Input from '../../../../common/InputField/Input';
 import Date from '../../../../common/Date/Date';
 import { Box, Typography, Grid } from '@mui/material';
 import Dropdown from '../../../../common/Dropdown/Dropdown';
+import useApi from '../../../../../core/api-service/useApi';
+import { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 
 const EntityDetailsTab = ({ formData, updateSection }) => {
+  const { get } = useApi();
+  const [dropdownOptions, setDropdownOptions] = useState({});
+
   const sections = [
     {
       title: 'Entity Details',
@@ -29,17 +35,112 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
     },
   ];
 
-  const handleChange = (key, value) => {
+  useEffect(() => {
+    const injectDummyDropdowns = () => {
+      const allDropdownFields = sections
+        .flatMap((section) => section.fields)
+        .filter((field) => field.type === 'select');
+
+      const dummyMap = {
+        country: [
+          { label: 'India', value: 'IN' },
+          { label: 'USA', value: 'US' },
+          { label: 'UK', value: 'UK' },
+        ],
+        geographicalZone: [
+          { label: 'North', value: 'north' },
+          { label: 'South', value: 'south' },
+          { label: 'East', value: 'east' },
+          { label: 'West', value: 'west' },
+        ],
+        groupType: [
+          { label: 'Group', value: 'group' },
+          { label: 'Non-Group', value: 'non-group' },
+        ],
+        operatingGroup: [
+          { label: 'Operations A', value: 'op-a' },
+          { label: 'Operations B', value: 'op-b' },
+        ],
+        status: [
+          { label: 'Active', value: 'active' },
+          { label: 'Inactive', value: 'inactive' },
+        ],
+        currency: [
+          { label: 'USD', value: 'USD' },
+          { label: 'INR', value: 'INR' },
+          { label: 'EUR', value: 'EUR' },
+        ],
+        incorporationPlace: [
+          { label: 'New York', value: 'ny' },
+          { label: 'Mumbai', value: 'mumbai' },
+          { label: 'London', value: 'london' },
+        ],
+        businessUnit: [
+          { label: 'Unit A', value: 'unit-a' },
+          { label: 'Unit B', value: 'unit-b' },
+        ],
+        subBusinessUnit: [
+          { label: 'Sub A1', value: 'sub-a1' },
+          { label: 'Sub B1', value: 'sub-b1' },
+        ],
+      };
+
+      const optionsMap = {};
+      allDropdownFields.forEach((field) => {
+        optionsMap[field.key] = dummyMap[field.key] || [
+          { label: 'Option 1', value: '1' },
+          { label: 'Option 2', value: '2' },
+        ];
+      });
+
+      setDropdownOptions(optionsMap);
+    };
+
+    injectDummyDropdowns();
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchDropdowns = async () => {
+  //     const allDropdownFields = sections
+  //       .flatMap((section) => section.fields)
+  //       .filter((field) => field.type === 'select' && field.apiEndpoint);
+
+  //     const results = await Promise.all(
+  //       allDropdownFields.map(async (field) => {
+  //         try {
+  //           const response = await get(field.apiEndpoint);
+  //           return { key: field.key, options: response?.data || [] };
+  //         } catch (err) {
+  //           console.error(`Failed to fetch ${field.key} dropdown:`, err);
+  //           return { key: field.key, options: [] };
+  //         }
+  //       })
+  //     );
+
+  //     const optionsMap = {};
+  //     results.forEach(({ key, options }) => {
+  //       optionsMap[key] = options;
+  //     });
+
+  //     setDropdownOptions(optionsMap);
+  //   };
+
+  //   fetchDropdowns();
+  // }, []);
+
+  const handleChange = (subSectionKey, key, value) => {
     updateSection('entityDetails', {
       ...formData.entityDetails,
-      [key]: value,
+      [subSectionKey]: {
+        ...formData.entityDetails[subSectionKey],
+        [key]: value,
+      },
     });
   };
+
+  const renderField = (field, subSectionKey) => {
+    const value = formData?.entityDetails?.[subSectionKey]?.[field.key] || '';
   
-  const renderField = (field) => {
-    console.log('formData?', formData);
-    const value = formData?.entityDetails?.[field.key] || '';
-    console.log('hhhhh', value);
     switch (field.type) {
       case 'input':
         return (
@@ -49,7 +150,9 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             isRequired={field.isRequired}
             placeholder={`Enter ${field.label}`}
             value={value}
-            onChange={(e) => handleChange(field.key, e.target.value)}
+            onChange={(e) =>
+              handleChange(subSectionKey, field.key, e.target.value)
+            }
           />
         );
       case 'select':
@@ -59,9 +162,11 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             isRequired={field.isRequired}
             label=""
             placeholder={`Select ${field.label}`}
-            options={field.options || []}
+            options={dropdownOptions[field.key] || []}
             value={value}
-            onChange={(e) => handleChange(field.key, e.target.value)}
+            onChange={(e) =>
+              handleChange(subSectionKey, field.key, e.target.value)
+            }
             labelKey="label"
             valueKey="value"
             showClearIcon={true}
@@ -74,8 +179,15 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             labelName={field.label}
             isRequired={field.isRequired}
             label=""
-            value={formData?.entityDetails?.[field.key] || null}
-            onChange={(value) => handleChange(field.key, value)}
+            value={
+              formData?.entityDetails?.[subSectionKey]?.[field.key]
+                ? dayjs(formData.entityDetails[subSectionKey][field.key])
+                : null
+            }
+            onChange={(val) => {
+              const formatted = val ? val.format('YYYY-MM-DD') : '';
+              handleChange(subSectionKey, field.key, formatted);
+            }}
           />
         );
       default:
@@ -98,14 +210,18 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             </Typography>
             <Box sx={{ flex: 1, borderBottom: '2px dotted #2E2D2C' }} />
           </Box>
-
-          <Grid container spacing={2}>
-            {section.fields.map((field) => (
-              <Grid item xs={12} sm={6} md={4} key={field.key}>
-                {renderField(field)}
-              </Grid>
-            ))}
-          </Grid>
+          {Object.entries(entityFormFields).map(([subSectionKey, fields]) => (
+          <Box key={subSectionKey}>
+            <Typography>{subSectionKey}</Typography>
+            <Grid container spacing={2}>
+              {fields.map((field) => (
+                <Grid item xs={12} sm={6} md={4} key={field.key}>
+                  {renderField(field, subSectionKey)}
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+          ))}
         </Box>
       ))}
     </Box>

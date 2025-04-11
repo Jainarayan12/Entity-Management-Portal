@@ -1,58 +1,107 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Grid, Typography, IconButton, Button } from '@mui/material';
 import Input from '../../../../common/InputField/Input';
 import Date from '../../../../common/Date/Date';
 import Dropdown from '../../../../common/Dropdown/Dropdown';
 import PropTypes from 'prop-types';
-import React from 'react';
 import addCircle from '../../../../../assets/images/add-circle.svg';
 import deleteIcon from '../../../../../assets/images/delete.svg';
+import useApi from '../../../../../core/api-service/useApi';
+import React from 'react';
+import dayjs from 'dayjs';
 
-const countryOptions = [
-  { id: 'IN', name: 'India' },
-  { id: 'US', name: 'USA' },
-  { id: 'SG', name: 'Singapore' },
-];
+const AddressTab = ({ formData, updateSection }) => {
+  const { get } = useApi();
+  const [registeredCountries, setRegisteredCountries] = useState([]);
+  const [operatingCountries, setOperatingCountries] = useState([]);
+  const [additionalCountries, setAdditionalCountries] = useState([]);
 
-const AddressTab = ({ formValues, setFormValues }) => {
-  const [additionalAddresses, setAdditionalAddresses] = useState(['']);
+  useEffect(() => {
+    const fetchRegistered = async () => {
+      // try {
+      //   const res = await get('/dropdown/countries/registered');
+      //   setRegisteredCountries(res?.data || []);
+      // } catch {
+        setRegisteredCountries([
+          { id: 'IN', name: 'India (Reg)' },
+          { id: 'UK', name: 'UK (Reg)' },
+        ]);
+      // }
+    };
+
+    const fetchOperating = async () => {
+      // try {
+      //   const res = await get('/dropdown/countries/operating');
+      //   setOperatingCountries(res?.data || []);
+      // } catch {
+        setOperatingCountries([
+          { id: 'US', name: 'USA (Ops)' },
+          { id: 'CA', name: 'Canada (Ops)' },
+        ]);
+      // }
+    };
+
+    const fetchAdditional = async () => {
+      // try {
+      //   const res = await get('/dropdown/countries/additional');
+      //   setAdditionalCountries(res?.data || []);
+      // } catch {
+        setAdditionalCountries([
+          { id: 'DE', name: 'Germany (Add)' },
+          { id: 'FR', name: 'France (Add)' },
+        ]);
+      // }
+    };
+
+    if (!formData?.address) {
+      updateSection('address', {
+        additionalAddresses: [{ address: '', country: '' }],
+      });
+    } else if (!formData.address.additionalAddresses?.length) {
+      updateSection('address', {
+        ...formData.address,
+        additionalAddresses: [{ address: '', country: '' }],
+      });
+    }
+
+    fetchRegistered();
+    fetchOperating();
+    fetchAdditional();
+  }, []);
 
   const handleChange = (key, value) => {
-    setFormValues((prev) => ({
-      ...prev,
-      address: { ...prev.address, [key]: value },
-    }));
+    updateSection('address', {
+      [key]: value,
+    });
   };
 
-  const handleAdditionalChange = (index, value) => {
-    const updated = [...additionalAddresses];
-    updated[index] = value;
-    setAdditionalAddresses(updated);
-    setFormValues((prev) => ({
-      ...prev,
-      address: { ...prev.address, additionalAddresses: updated },
-    }));
+  const handleAdditionalChange = (index, key, value) => {
+    const current = formData?.address?.additionalAddresses || [];
+    const updated = [...current];
+    updated[index] = {
+      ...updated[index],
+      [key]: value,
+    };
+    updateSection('address', {
+      additionalAddresses: updated,
+    });
   };
 
   const handleAddField = () => {
-    if (additionalAddresses.length < 3) {
-      const updated = [...additionalAddresses, ''];
-      setAdditionalAddresses(updated);
-      setFormValues((prev) => ({
-        ...prev,
-        address: { ...prev.address, additionalAddresses: updated },
-      }));
+    const current = formData?.address?.additionalAddresses || [];
+    if (current.length < 3) {
+      updateSection('address', {
+        additionalAddresses: [...current, { address: '', country: '' }],
+      });
     }
   };
 
   const handleRemoveField = (index) => {
-    const updated = [...additionalAddresses];
-    updated.splice(index, 1);
-    setAdditionalAddresses(updated);
-    setFormValues((prev) => ({
-      ...prev,
-      address: { ...prev.address, additionalAddresses: updated },
-    }));
+    const current = formData?.address?.additionalAddresses || [];
+    const updated = current.filter((_, i) => i !== index);
+    updateSection('address', {
+      additionalAddresses: updated,
+    });
   };
 
   return (
@@ -61,24 +110,34 @@ const AddressTab = ({ formValues, setFormValues }) => {
         Add an address
       </Typography>
       <Grid container spacing={2}>
+        {/* Event Date */}
+
         <Grid item xs={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <Date
                 label=""
                 labelName="Event Date"
-                value={formValues?.address?.eventDate || null}
-                onChange={(val) => handleChange('eventDate', val)}
+                value={
+                  formData?.address?.eventDate
+                    ? dayjs(formData.address.eventDate)
+                    : null
+                }
+                onChange={(val) => {
+                  const formattedDate = val ? val.format('YYYY-MM-DD') : '';
+                  handleChange('eventDate', formattedDate);
+                }}
               />
             </Grid>
           </Grid>
         </Grid>
 
+        {/* Registered Address */}
         <Grid item xs={12} sm={6}>
           <Input
             label=""
             labelName="Registered Address"
-            value={formValues?.address?.registeredAddress || ''}
+            value={formData?.address?.registeredAddress || ''}
             onChange={(e) => handleChange('registeredAddress', e.target.value)}
           />
         </Grid>
@@ -86,19 +145,20 @@ const AddressTab = ({ formValues, setFormValues }) => {
           <Dropdown
             label=""
             labelName="Country Of Registered Address"
-            options={countryOptions}
-            value={formValues?.address?.registeredCountry || ''}
-            onChange={(val) => handleChange('registeredCountry', val)}
+            options={registeredCountries}
+            value={formData?.address?.registeredCountry || ''}
+            onChange={(e) => handleChange('registeredCountry', e.target.value)}
             labelKey="name"
             valueKey="id"
           />
         </Grid>
 
+        {/* Operating Address */}
         <Grid item xs={12} sm={6}>
           <Input
             label=""
             labelName="Operating Address"
-            value={formValues?.address?.operatingAddress || ''}
+            value={formData?.address?.operatingAddress || ''}
             onChange={(e) => handleChange('operatingAddress', e.target.value)}
           />
         </Grid>
@@ -106,22 +166,25 @@ const AddressTab = ({ formValues, setFormValues }) => {
           <Dropdown
             label=""
             labelName="Country Of Operating Address"
-            options={countryOptions}
-            value={formValues?.address?.operatingCountry || ''}
-            onChange={(val) => handleChange('operatingCountry', val)}
+            options={operatingCountries}
+            value={formData?.address?.operatingCountry || ''}
+            onChange={(e) => handleChange('operatingCountry', e.target.value)}
             labelKey="name"
             valueKey="id"
           />
         </Grid>
 
-        {additionalAddresses.map((addr, index) => (
-          <React.Fragment key={`address-${index}`} sx={{ width: '90%' }}>
+        {/* Additional Addresses */}
+        {(formData?.address?.additionalAddresses || []).map((item, index) => (
+          <React.Fragment key={`additional-${index}`}>
             <Grid item xs={12} sm={6}>
               <Input
                 label=""
                 labelName={`Additional Address ${index + 1}`}
-                value={addr}
-                onChange={(e) => handleAdditionalChange(index, e.target.value)}
+                value={item.address}
+                onChange={(e) =>
+                  handleAdditionalChange(index, 'address', e.target.value)
+                }
                 InputProps={{
                   endAdornment:
                     index > 0 ? (
@@ -132,7 +195,7 @@ const AddressTab = ({ formValues, setFormValues }) => {
                         <Box
                           component="img"
                           src={deleteIcon}
-                          alt="scope"
+                          alt="remove"
                           sx={{ width: 24, height: 24 }}
                         />
                       </IconButton>
@@ -140,43 +203,24 @@ const AddressTab = ({ formValues, setFormValues }) => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ position: 'relative' }}>
+            <Grid item xs={12} sm={6}>
               <Dropdown
                 label=""
                 labelName={`Country Of Additional Address ${index + 1}`}
-                options={countryOptions}
-                value={
-                  formValues?.address?.[`additionalCountry${index + 1}`] || ''
-                }
-                onChange={(val) =>
-                  handleChange(`additionalCountry${index + 1}`, val)
+                options={additionalCountries}
+                value={item.country}
+                onChange={(e) =>
+                  handleAdditionalChange(index, 'country', e.target.value)
                 }
                 labelKey="name"
                 valueKey="id"
-                sx={{ flex: 1 }}
               />
-              {index > 0 && (
-                <IconButton
-                  onClick={() => handleRemoveField(index)}
-                  sx={{
-                    ml: 1,
-                    position: 'absolute',
-                    outline: 'none !important',
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={deleteIcon}
-                    alt="scope"
-                    sx={{ width: 24, height: 24 }}
-                  />
-                </IconButton>
-              )}
             </Grid>
           </React.Fragment>
         ))}
 
-        {additionalAddresses.length < 3 && (
+        {/* Add Additional Address Button */}
+        {(formData?.address?.additionalAddresses || []).length < 3 && (
           <Grid item xs={12} textAlign="end">
             <Button
               onClick={handleAddField}
@@ -193,7 +237,7 @@ const AddressTab = ({ formValues, setFormValues }) => {
               <Box
                 component="img"
                 src={addCircle}
-                alt="scope"
+                alt="Add"
                 sx={{ width: 24, height: 24 }}
               />
               Add Additional Address
@@ -206,10 +250,10 @@ const AddressTab = ({ formValues, setFormValues }) => {
 };
 
 AddressTab.propTypes = {
-  formValues: PropTypes.shape({
+  formData: PropTypes.shape({
     address: PropTypes.object.isRequired,
   }).isRequired,
-  setFormValues: PropTypes.func.isRequired,
+  updateSection: PropTypes.func.isRequired,
 };
 
 export default AddressTab;

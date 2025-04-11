@@ -8,21 +8,21 @@ export const entityFormFields = {
       type: 'input',
       required: true,
     },
-    { key: 'country', label: 'Country', type: 'select', isRequired: true },
-    {
-      key: 'geographicalZone',
-      label: 'Geographical Zone',
-      type: 'select',
-      isRequired: true,
-    },
   ],
   location: [
-    { key: 'country', label: 'Country', type: 'select', isRequired: true },
+    {
+      key: 'country',
+      label: 'Country',
+      type: 'select',
+      isRequired: true,
+      apiEndpoint: '/dropdown/countries',
+    },
     {
       key: 'geographicalZone',
       label: 'Geographical Zone',
       type: 'select',
       isRequired: true,
+      apiEndpoint: '/dropdown/countries',
     },
   ],
   organization: [
@@ -31,18 +31,21 @@ export const entityFormFields = {
       label: 'Group/Non-Group',
       type: 'select',
       required: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'operatingGroup',
       label: 'Operating Group',
       type: 'select',
       isRequired: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'businessActivity',
       label: 'Business Activity',
       type: 'input',
       isRequired: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'status',
@@ -50,6 +53,7 @@ export const entityFormFields = {
       type: 'select',
       required: true,
       isRequired: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'statusEffectiveDate',
@@ -75,7 +79,13 @@ export const entityFormFields = {
       type: 'input',
       isRequired: true,
     },
-    { key: 'currency', label: 'Currency', type: 'select', required: true },
+    {
+      key: 'currency',
+      label: 'Currency',
+      type: 'select',
+      required: true,
+      apiEndpoint: '/dropdown/countries',
+    },
     {
       key: 'incorporationDate',
       label: 'Incorporation Date',
@@ -87,18 +97,21 @@ export const entityFormFields = {
       label: 'Incorporation Place',
       type: 'select',
       required: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'businessUnit',
       label: 'Business Unit',
       type: 'select',
       isRequired: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'subBusinessUnit',
       label: 'Sub Business Unit',
       type: 'select',
       isRequired: true,
+      apiEndpoint: '/dropdown/countries',
     },
     {
       key: 'corpsecAgent',
@@ -173,11 +186,31 @@ export const entityFormFields = {
 export const documentsSchema = [
   { key: 'eventDate', label: 'Event Date', type: 'date' },
   { key: 'documentTitle', label: 'Document Title', type: 'input' },
-  { key: 'documentCategory', label: 'Document Category', type: 'select' },
-  { key: 'documentType', label: 'Document Type', type: 'select' },
+  {
+    key: 'documentCategory',
+    label: 'Document Category',
+    type: 'select',
+    apiEndpoint: '/dropdown/countries',
+  },
+  {
+    key: 'documentType',
+    label: 'Document Type',
+    type: 'select',
+    apiEndpoint: '/dropdown/countries',
+  },
   { key: 'author', label: 'Author', type: 'input' },
-  { key: 'documentStatus', label: 'Document Status', type: 'select' },
-  { key: 'version', label: 'Version', type: 'select' },
+  {
+    key: 'documentStatus',
+    label: 'Document Status',
+    type: 'select',
+    apiEndpoint: '/dropdown/countries',
+  },
+  {
+    key: 'version',
+    label: 'Version',
+    type: 'select',
+    apiEndpoint: '/dropdown/countries',
+  },
   { key: 'expiryDate', label: 'Expiry Date', type: 'date' },
   { key: 'upload', label: 'Upload Document', type: 'file' },
 ];
@@ -226,12 +259,12 @@ export const capitalShareFormFields = {
     },
     { key: 'parValueCheckbox', label: 'Par Value', type: 'checkbox' },
     { key: 'nominalValueCheckbox', label: 'Nominal Value', type: 'checkbox' },
-    { key: 'parValue', label: 'Par Value', type: 'input', required: true },
+    { key: 'parValue', label: 'Par Value', type: 'input', required: false },
     {
       key: 'nominalValue',
       label: 'Nominal Value',
       type: 'input',
-      required: true,
+      required: false,
     },
     {
       key: 'capitalShare',

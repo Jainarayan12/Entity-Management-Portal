@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         setUserType(decodeToken.roles[0]?.name);
         setUserID(decodeToken.roles[0]?.role_code);
         setLanguage(decodeToken.masterLangDto?.langName);
-        i18n.changeLanguage(decodeToken.masterLangDto?.langName);
+        // i18n.changeLanguage(decodeToken.masterLangDto?.langName);
         navigate('/dashboard');
       }
       setLoading(false);
