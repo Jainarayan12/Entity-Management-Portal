@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box } from '@mui/material';
 import EntityTabs from './EntityTabs';
 import EntityFooter from '../../../../Layout/Footer';
+import { toastError } from '../../../common/Toast/Toast';
 
 const EntityCreation = () => {
   const [formData, setFormData] = useState({
@@ -85,17 +86,19 @@ const EntityCreation = () => {
         currency: '',
       },
     },
-    documents: {
-      eventDate: '',
-      documentTitle: '',
-      documentCategory: '',
-      documentType: '',
-      author: '',
-      documentStatus: '',
-      version: '',
-      expiryDate: '',
-      upload: [],
-    },
+    documents: [
+      {
+        eventDate: '',
+        documentTitle: '',
+        documentCategory: '',
+        documentType: '',
+        author: '',
+        documentStatus: '',
+        version: '',
+        expiryDate: '',
+        upload: [],
+      },
+    ],
   });
 
   const updateSection = (section, data) => {
@@ -107,8 +110,22 @@ const EntityCreation = () => {
 
   const [tabIndex, setTabIndex] = useState(0);
 
+  const isAnyUploadIncomplete = () => {
+    const docsArray = Object.values(formData.documents || {});
+    console.log('dddd', docsArray);
+    return docsArray.some((doc) =>
+      (doc.upload || []).some((file) => file.progress < 100),
+    );
+  };
+
   const handleSaveDraft = () => {
-    console.log('Saving draft:', formData);
+    console.log('Saving draft:', formData.documents);
+    if (isAnyUploadIncomplete()) {
+      toastError(
+        'documents are not fully uploaded delete and reupload them again',
+      );
+      return;
+    }
   };
 
   const handleSubmit = () => {

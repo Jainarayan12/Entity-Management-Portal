@@ -12,19 +12,111 @@ import useApi from '../../../../../core/api-service/useApi';
 import upload from '../../../../../assets/images/upload-icon.svg';
 import Tooltip from '@mui/material/Tooltip';
 import successicon from '../../../../../assets/images/success.svg';
+import close from '../../../../../assets/images/close.svg';
+import ConfirmDialog from '../../../../common/Modal/ModalComponent';
+import dayjs from 'dayjs';
+import { useEffect } from 'react';
 
-const DocumentsTab = ({ formValues, setFormValues }) => {
-  const MAX_SECTIONS = 3;
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+const DocumentsTab = ({ formData, updateSection }) => {
+  const [dropdownOptions, setDropdownOptions] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [deleteTicketIndex, setDeleteTicketIndex] = useState();
+  const [deleteTicketIndex, setDeleteTicketIndex] = useState({
+    sectionIndex: null,
+    fileIndex: null,
+  });
+
+  const MAX_SECTIONS = 3;
   const { post } = useApi();
 
-  const handleFieldChange = (index, key, value) => {
-    const updated = [...documentSections];
-    updated[index].fields[key] = value;
-    setDocumentSections(updated);
+  const handleOpenModal = (sectionIndex, fileIndex) => {
+    console.log('ss', sectionIndex, fileIndex);
+    setDeleteTicketIndex({ sectionIndex, fileIndex });
+    setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    if (formData?.documents?.length) {
+      const sections = formData.documents.map((doc) => ({
+        id: Date.now(),
+        fields: {
+          ...doc,
+          eventDate: doc.eventDate ? dayjs(doc.eventDate) : null,
+          expiryDate: doc.expiryDate ? dayjs(doc.expiryDate) : null,
+        },
+        uploadedFiles: doc.upload || [],
+      }));
+      setDocumentSections(sections);
+    }
+  }, []);
+
+  useEffect(() => {
+    const injectDummyDropdowns = () => {
+      const allDropdownFields = documentsSchema.filter(
+        (field) => field.type === 'select',
+      );
+
+      const dummyMap = {
+        documentCategory: [
+          { label: 'Legal', value: 'legal' },
+          { label: 'Financial', value: 'financial' },
+          { label: 'HR', value: 'hr' },
+        ],
+        documentStatus: [
+          { label: 'Approved', value: 'approved' },
+          { label: 'Pending', value: 'pending' },
+          { label: 'Rejected', value: 'rejected' },
+        ],
+        documentType: [
+          { label: 'PDF', value: 'pdf' },
+          { label: 'Word', value: 'doc' },
+        ],
+      };
+
+      const optionsMap = {};
+      allDropdownFields.forEach((field) => {
+        optionsMap[field.key] = dummyMap[field.key] || [
+          { label: 'Option 1', value: '1' },
+          { label: 'Option 2', value: '2' },
+        ];
+      });
+
+      setDropdownOptions(optionsMap);
+    };
+
+    injectDummyDropdowns();
+  }, []);
+
+  // Uncomment this block if your fields contain apiEndpoint keys
+  /*
+  useEffect(() => {
+    const fetchDropdowns = async () => {
+      const dropdownFieldsWithApi = documentsSchema.filter(
+        (field) => field.type === 'select' && field.apiEndpoint
+      );
+  
+      const results = await Promise.all(
+        dropdownFieldsWithApi.map(async (field) => {
+          try {
+            const response = await get(field.apiEndpoint);
+            return { key: field.key, options: response?.data || [] };
+          } catch (err) {
+            console.error(Failed to fetch ${field.key} dropdown:, err);
+            return { key: field.key, options: [] };
+          }
+        })
+      );
+  
+      const optionsMap = {};
+      results.forEach(({ key, options }) => {
+        optionsMap[key] = options;
+      });
+  
+      setDropdownOptions(optionsMap);
+    };
+  
+    fetchDropdowns();
+  }, []);
+  */
 
   const initializeFields = () => {
     const fields = {};
@@ -38,15 +130,28 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
     { id: Date.now(), fields: initializeFields(), uploadedFiles: [] },
   ]);
 
+  const handleFieldChange = (index, key, value) => {
+    const updated = [...documentSections];
+    updated[index].fields[key] = value;
+    setDocumentSections(updated);
+    syncDocumentsToFormData(updated);
+  };
+
   const handleAddSection = () => {
     if (documentSections.length >= MAX_SECTIONS) {
       toastError(`Only ${MAX_SECTIONS} sections allowed.`);
       return;
     }
-    setDocumentSections((prev) => [
-      ...prev,
-      { id: Date.now(), fields: initializeFields(), uploadedFiles: [] },
-    ]);
+
+    const newSection = {
+      id: Date.now(),
+      fields: initializeFields(),
+      uploadedFiles: [],
+    };
+
+    const updated = [...documentSections, newSection];
+    setDocumentSections(updated);
+    syncDocumentsToFormData(updated);
   };
 
   const formatFileSize = (size) => {
@@ -55,160 +160,89 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
       : `${(size / 1024 / 1024).toFixed(1)} MB`;
   };
 
-  const getDocumentId = (file, isMatched) => {
-    if (file.documentId) {
-      return file.documentId;
-    } else if (isMatched?.documentId) {
-      return isMatched.documentId;
-    } else {
-      return null;
-    }
-  };
-
-  const handleFileUpload = async (event) => {
+  const handleFileUpload = async (event, index) => {
     const fileInput = event.target;
-    const data = Array.from(event.nativeEvent.srcElement.files).map(
-      (file) => file,
-    );
+    const data = Array.from(fileInput.files);
+    const currentSection = [...documentSections];
+    const uploadedFiles = currentSection[index].uploadedFiles || [];
 
-    // validate new files
     const validFiles = data.filter((file) => {
-      // file size check
-      if (file.size > 15 * 1024 * 1024) {
-        toastError(
-          `${file.name} size exceeds 5 MB. PDF size should not exceed 5 MB.`,
-        );
+      if (file.size > 5 * 1024 * 1024) {
+        toastError(`${file.name} exceeds 5 MB.`);
         return false;
       }
-
-      // check for duplicates
-      const isDuplicate = uploadedFiles.some(
-        (uploadedFile) => uploadedFile.file.name === file.name,
-      );
-
-      if (isDuplicate) {
-        toastError(`${file.name} is already uploaded.`);
+      if (uploadedFiles.some((f) => f.file.name === file.name)) {
+        toastError(`${file.name} already uploaded.`);
         return false;
       }
-
-      // check file type
       if (file.type !== 'application/pdf') {
-        toastError(`${file.name} is not a PDF. Only PDF files are allowed.`);
+        toastError(`${file.name} is not a PDF.`);
         return false;
       }
-
       return true;
     });
 
-    // max length check
     if (uploadedFiles.length + validFiles.length > 1) {
-      toastError('Upload limit exceeded. You cannot upload more than 1 files');
+      toastError('Only 1 file allowed per section.');
       return;
     }
 
-    if (validFiles.length == 0) {
-      return;
-    }
+    if (validFiles.length === 0) return;
 
     const newFiles = validFiles.map((file) => ({
-      file: file,
-      progress: 0,
+      file,
+      fileName: file.name,
+      progress: 10,
       size: formatFileSize(file.size),
+      documentId: null,
     }));
 
-    setUploadedFiles((prev) => [...prev, ...newFiles]);
+    currentSection[index].uploadedFiles = [...uploadedFiles, ...newFiles];
+    syncDocumentsToFormData([...currentSection]);
+    setDocumentSections([...currentSection]);
+
     const formData = new FormData();
-    newFiles.forEach((file) => {
-      formData.append('uploadFile', file.file);
-    });
+    newFiles.forEach((file) => formData.append('uploadFile', file.file));
 
-    let overallProgress = 0;
-    let interval;
     try {
-      interval = setInterval(() => {
-        overallProgress = Math.min(overallProgress + 10, 95);
-        setUploadedFiles((prev) =>
-          prev.map((file) => ({
-            ...file,
-            progress:
-              file.progress < 100 ? Math.min(file.progress + 10, 95) : 100,
-          })),
-        );
-      }, 500);
-
-      const response = await post(
+      const res = await post(
         `${API_ENDPOINTS.ticket.uploadFile}?moduleId=1`,
         formData,
       );
 
-      if (response?.data?.responseCode == 200) {
-        const responseData = response.data.entity.documentDetails;
-        clearInterval(interval);
-        const updatedFiles = [...uploadedFiles, ...newFiles].map((file) => {
-          const isMatched = responseData.find(
-            (res) => res.fileName === file.file.name,
-          );
+      if (res?.data?.responseCode === 200) {
+        const responseData = res?.data?.entity?.documentDetails || [];
 
-          return {
-            ...file,
-            progress: file.progress < 100 ? 100 : file.progress,
-            documentId: getDocumentId(file, isMatched),
-          };
+        const updatedFiles = currentSection[index].uploadedFiles.map((file) => {
+          const match = responseData.find((f) => f.fileName === file.file.name);
+          return match
+            ? {
+                ...file,
+                progress: 100,
+                documentId: match?.documentId || null,
+              }
+            : {
+                ...file,
+                progress: file.progress,
+              };
         });
-        toastSuccess(response.data?.message);
-        setUploadedFiles(updatedFiles);
+
+        currentSection[index].uploadedFiles = updatedFiles;
+        setDocumentSections(currentSection);
+        syncDocumentsToFormData(currentSection);
+        toastSuccess(res?.data?.message);
+      } else {
+        toastError('Upload failed.');
       }
     } catch (error) {
-      clearInterval(interval);
-      setUploadedFiles((prev) =>
-        prev.map((file) => ({
-          ...file,
-          progress: file.progress < 100 ? 0 : file.progress,
-        })),
-      );
-
-      toastError('Upload failed!');
+      toastError('Upload failed.');
     }
 
     fileInput.value = '';
   };
-  const handleFileRemove = async () => {
-    const indexDocumentId = uploadedFiles[deleteTicketIndex]?.documentId;
-    if (indexDocumentId) {
-      const obj = {
-        documentId: indexDocumentId,
-      };
-      const data = await post(`${API_ENDPOINTS.ticket.deleteFile}`, obj);
-      if (data?.data?.responseCode == 200) {
-        toastSuccess(data?.data?.message);
-        const updatedFiles = uploadedFiles.filter(
-          (_, i) => i !== deleteTicketIndex,
-        );
 
-        setUploadedFiles(updatedFiles);
-        setIsModalOpen(false);
-      }
-    } else {
-      const updatedFiles = uploadedFiles.filter(
-        (_, i) => i !== deleteTicketIndex,
-      );
-      setUploadedFiles(updatedFiles);
-      setIsModalOpen(false);
-    }
-  };
-
-  const handleOpenModal = (file) => {
-    setDeleteTicketIndex(file);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const renderField = (index, field, value) => {
-    console.log('fffffffff', field);
-    // const value = formValues?.documents?.[field.key] || '';
+  const renderField = (index, field) => {
+    const value = documentSections[index].fields[field.key];
 
     switch (field.type) {
       case 'input':
@@ -231,7 +265,7 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
             isRequired={field.isRequired}
             label=""
             placeholder={`Select ${field.label}`}
-            options={field.options || []}
+            options={dropdownOptions[field.key] || []}
             value={value}
             onChange={(e) =>
               handleFieldChange(index, field.key, e.target.value)
@@ -248,8 +282,8 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
             labelName={field.label}
             isRequired={field.isRequired}
             label=""
-            value={formValues?.entityDetails?.[field.key] || null}
-            onChange={(value) => handleFieldChange(index, field.key, value)}
+            value={value}
+            onChange={(val) => handleFieldChange(index, field.key, val)}
           />
         );
       default:
@@ -257,25 +291,78 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
     }
   };
 
+  const syncDocumentsToFormData = (sections) => {
+    const updated = sections.map((section) => {
+      const formattedFields = { ...section.fields };
+
+      ['eventDate', 'expiryDate'].forEach((key) => {
+        const val = section.fields[key];
+        if (val && dayjs(val).isValid()) {
+          formattedFields[key] = dayjs(val).format('YYYY-MM-DD');
+        }
+      });
+
+      return {
+        ...formattedFields,
+        upload: section.uploadedFiles,
+      };
+    });
+
+    updateSection('documents', updated);
+  };
+
+  const handleFileRemove = async () => {
+    const { sectionIndex, fileIndex } = deleteTicketIndex;
+    console.log('documentSections', documentSections);
+    const section = documentSections[sectionIndex];
+    const file = section.uploadedFiles[fileIndex];
+    console.log('file', file);
+    if (!file) return;
+
+    const documentId = file?.documentId;
+    const updatedSections = [...documentSections];
+
+    if (!documentId) {
+      updatedSections[sectionIndex].uploadedFiles.splice(fileIndex, 1);
+      syncDocumentsToFormData(updatedSections);
+      setDocumentSections(updatedSections);
+      setIsModalOpen(false);
+      return;
+    }
+
+    try {
+      const res = await post(`${API_ENDPOINTS.ticket.deleteFile}`, {
+        documentId,
+      });
+
+      if (res?.data?.responseCode === 200) {
+        toastSuccess(res.data.message);
+      } else {
+        toastError('Server error while deleting');
+      }
+    } catch (err) {
+      toastError('API call failed while deleting file');
+    }
+
+    updatedSections[sectionIndex].uploadedFiles.splice(fileIndex, 1);
+    setDocumentSections(updatedSections);
+    setIsModalOpen(false);
+    syncDocumentsToFormData(updatedSections);
+  };
+
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        mb={2}
-        onClick={handleAddSection}
-      >
+      <Box display="flex" justifyContent="space-between" mb={2}>
         <Typography variant="h6" fontWeight={600} fontSize="20px">
           Add Documents
         </Typography>
         <Button
+          onClick={handleAddSection}
           sx={{
             mt: 1,
             textTransform: 'capitalize',
             color: '#FF7000',
             fontWeight: '600',
-            lineHeight: '20px',
-            gap: '6px',
             outline: 'none !important',
           }}
         >
@@ -283,96 +370,63 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
             component="img"
             src={addCircle}
             alt="scope"
-            sx={{ width: 24, height: 24 }}
+            sx={{ width: 24, height: 24, marginRight: '5px' }}
           />
           Add Additional Documents
         </Button>
       </Box>
       {documentSections.map((section, index) => (
-        <Box
-          key={section.id}
-          sx={{ border: '1px solid #ccc', borderRadius: 2, p: 2, mb: 3 }}
-        >
+        <Box key={section.id} sx={{ borderRadius: 2, p: 2, mb: 3 }}>
           <Grid container spacing={2}>
             {documentsSchema.map((field) => (
               <Grid item xs={12} sm={6} md={3} key={field.key}>
-                {renderField(index, field, field.value)}
+                {renderField(index, field)}
               </Grid>
             ))}
           </Grid>
-          <Grid item xs={12}>
-            <Typography
+          <Typography mt={2} mb={1}>
+            Upload Document
+          </Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Box
               sx={{
-                fontSize: '16px',
-                fontWeight: '400',
-                lineHeight: '20px',
-                color: '#2E2D2C',
-                marginBottom: '10px',
+                flex: 1,
+                border: '2px dashed #ccc',
+                borderRadius: '8px',
+                padding: '16px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                backgroundColor: '#fff',
               }}
+              onClick={() =>
+                document.getElementById(`file-input-${index}`).click()
+              }
             >
-              Upload Document
-            </Typography>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box
-                sx={{
-                  flex: 1,
-                  border: '2px dashed #ccc',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  backgroundColor: '#fff',
-                }}
-                onClick={() => document.getElementById('file-input').click()}
-              >
-                <Box
-                  component="img"
-                  src={upload}
-                  alt="Logo"
-                  marginRight="10px"
-                />
-                <Typography variant="body1">
-                  Drag & Drop or
-                  <Typography
-                    component="span"
-                    sx={{
-                      color: '#FF7000',
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      marginLeft: '5px',
-                    }}
-                  >
-                    Browse
-                  </Typography>
-                </Typography>
-                <Typography
-                  variant="caption"
-                  display="block"
-                  sx={{
-                    marginTop: '8px',
-                    color: '#00000099',
-                    fontWeight: '400px',
-                    fontSize: '12px',
-                  }}
-                >
-                  File supportive docx, pdf, xlxs, txt - Max 5MB
-                </Typography>
-                <input
-                  id="file-input"
-                  type="file"
-                  multiple
-                  accept=".pdf"
-                  style={{ display: 'none' }}
-                  onChange={(e) => handleFileUpload(e)}
-                />
-              </Box>
+              <Box component="img" src={upload} alt="upload" />
+              <Typography>
+                Drag & Drop or
+                <span style={{ color: '#FF7000', textDecoration: 'underline' }}>
+                  Browse
+                </span>
+              </Typography>
+              <Typography variant="caption">
+                Only PDF files allowed - Max 5MB
+              </Typography>
+              <input
+                id={`file-input-${index}`}
+                type="file"
+                multiple
+                accept=".pdf"
+                style={{ display: 'none' }}
+                onChange={(e) => handleFileUpload(e, index)}
+              />
             </Box>
-          </Grid>
+          </Box>
           {section.uploadedFiles.length > 0 && (
-            <Grid item xs={12} marginTop="16px">
-              {section.uploadedFiles.map((file, index) => (
+            <Grid item xs={12} mt={2}>
+              {section.uploadedFiles.map((file, fIndex) => (
                 <Box
-                  key={index}
+                  key={fIndex}
                   sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -449,9 +503,7 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
                         sx={{
                           cursor: 'pointer',
                         }}
-                        onClick={() => {
-                          handleFileRemove();
-                        }}
+                        onClick={() => handleOpenModal(index, fIndex)}
                       />
                     </Tooltip>
                   ) : (
@@ -462,20 +514,30 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
                         alt="close"
                         marginLeft="10px"
                       />
-
                       <Tooltip title="Delete" placement="top">
                         <Box
                           component="img"
                           src={close}
                           alt="close"
                           marginLeft="10px"
-                          onClick={() => handleOpenModal(index)}
+                          onClick={() => handleOpenModal(index, fIndex)}
                           sx={{
                             cursor: 'pointer',
                           }}
                         />
                       </Tooltip>
                     </Box>
+                  )}
+                  {isModalOpen && (
+                    <ConfirmDialog
+                      open={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                      onConfirm={handleFileRemove}
+                      title=" Delete"
+                      description="Are you sure you want to delete this document? This action cannot be undone."
+                      confirmText="Delete Document"
+                      cancelText="Cancel"
+                    />
                   )}
                 </Box>
               ))}
@@ -488,8 +550,8 @@ const DocumentsTab = ({ formValues, setFormValues }) => {
 };
 
 DocumentsTab.propTypes = {
-  formValues: PropTypes.object.isRequired,
-  setFormValues: PropTypes.func.isRequired,
+  formData: PropTypes.object.isRequired,
+  updateSection: PropTypes.func.isRequired,
 };
 
 export default DocumentsTab;

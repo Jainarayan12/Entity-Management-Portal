@@ -1,133 +1,73 @@
 import PropTypes from 'prop-types';
 import {
-  Box,
   Dialog,
+  DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   Typography,
+  Button,
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 
-const ConfirmationModal = ({
+const ConfirmDialog = ({
   open,
   onClose,
   onConfirm,
   title,
-  message,
-  confirmButtonText,
-  cancelButtonText,
-  icon,
+  description,
+  confirmText,
+  cancelText,
 }) => {
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      PaperProps={{
-        sx: {
-          boxShadow: 'none',
-          border: '1px solid #999999',
-          width: '550px',
-        },
-      }}
-      sx={{
-        '& .MuiBackdrop-root': {
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          position: 'relative',
-        },
-        '& .MuiDialog-container.MuiDialog-scrollPaper': {
-          backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        },
-        boxShadow: 'none !important',
-      }}
-    >
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        p={1}
-      >
-        <Typography variant="h6" fontWeight="bold">
-          {title}
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <WarningAmberRoundedIcon sx={{ color: '#FF7000' }} />
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          {title || 'Confirm Deletion'}
         </Typography>
-        <IconButton onClick={onClose} sx={{ outline: 'none !important' }}>
-          <CloseIcon />
+        <IconButton onClick={onClose} size="small" outline= 'none !important'>
+          <CloseIcon fontSize="small" />
         </IconButton>
-      </Box>
-      <DialogContent sx={{ padding: '10px 20px' }}>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          flexDirection="column"
-          gap={2}
-        >
-          {icon && (
-            <Box
-              component="img"
-              src={icon}
-              alt="Icon"
-              sx={{ width: '48px', height: '48px' }}
-            />
-          )}
-          <Typography
-            variant="body1"
-            textAlign="center"
-            fontWeight="400"
-            sx={{ color: '#333' }}
-          >
-            {message}
-          </Typography>
-        </Box>
+      </DialogTitle>
+
+      <DialogContent>
+        <Typography sx={{ fontSize: '14px', color: '#2E2D2C' }}>
+          {description ||
+            'This action is permanent and may affect related records. Are you sure you want to proceed?'}
+        </Typography>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', padding: '16px 20px',mb:2 }}>
+
+      <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button
-          variant="outlined"
-          color="warning"
           onClick={onClose}
-          sx={{ textTransform: 'none', marginRight: '16px', flex: 1 }}
+          variant="outlined"
+          sx={{ textTransform: 'capitalize', minWidth: 100 }}
         >
-          {cancelButtonText}
+          {cancelText || 'Cancel'}
         </Button>
         <Button
-          variant="contained"
           onClick={onConfirm}
-          sx={{
-            textTransform: 'none',
-            backgroundColor: '#FF7000',
-            color: '#fff',
-            flex: 1,
-            outline:'none !important',
-            '&:hover': {
-              backgroundColor: '#FF7000',
-            },
-          }}
+          variant="contained"
+          color="warning"
+          sx={{ textTransform: 'capitalize', minWidth: 140 }}
         >
-          {confirmButtonText}
+          {confirmText || 'Delete Entity'}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-ConfirmationModal.propTypes = {
+ConfirmDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   title: PropTypes.string,
-  message: PropTypes.string,
-  confirmButtonText: PropTypes.string,
-  cancelButtonText: PropTypes.string,
-  icon: PropTypes.string,
+  description: PropTypes.string,
+  confirmText: PropTypes.string,
+  cancelText: PropTypes.string,
 };
 
-ConfirmationModal.defaultProps = {
-  title: '',
-  message: 'Are you sure you want to proceed?',
-  confirmButtonText: 'Confirm',
-  cancelButtonText: 'Cancel',
-  icon: null,
-};
-
-export default ConfirmationModal;
+export default ConfirmDialog;

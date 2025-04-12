@@ -140,7 +140,7 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
 
   const renderField = (field, subSectionKey) => {
     const value = formData?.entityDetails?.[subSectionKey]?.[field.key] || '';
-  
+
     switch (field.type) {
       case 'input':
         return (
@@ -211,16 +211,16 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             <Box sx={{ flex: 1, borderBottom: '2px dotted #2E2D2C' }} />
           </Box>
           {Object.entries(entityFormFields).map(([subSectionKey, fields]) => (
-          <Box key={subSectionKey}>
-            <Typography>{subSectionKey}</Typography>
-            <Grid container spacing={2}>
-              {fields.map((field) => (
-                <Grid item xs={12} sm={6} md={4} key={field.key}>
-                  {renderField(field, subSectionKey)}
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
+            <Box key={subSectionKey}>
+              <Typography>{subSectionKey}</Typography>
+              <Grid container spacing={2}>
+                {fields.map((field) => (
+                  <Grid item xs={12} sm={6} md={4} key={field.key}>
+                    {renderField(field, subSectionKey)}
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
           ))}
         </Box>
       ))}

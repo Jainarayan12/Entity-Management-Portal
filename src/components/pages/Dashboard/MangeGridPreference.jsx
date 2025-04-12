@@ -74,7 +74,7 @@ const ManageGridPreferences = ({
           <Typography sx={{ fontSize: '16px', fontWeight: 600 }}>
             Manage Grid Preferences
           </Typography>
-          <IconButton onClick={onClose} sx={{ padding: 0 }}>
+          <IconButton onClick={onClose} sx={{ padding: 0 }} outline= 'none !important'>
             <Box
               component="img"
               src={close}

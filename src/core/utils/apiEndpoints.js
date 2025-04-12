@@ -9,4 +9,5 @@ export const API_ENDPOINTS = {
     expire: `${VITE_API_BASE_URL}${authService}oauth/logOut`,
     refreshToken: `${VITE_API_BASE_URL}${authService}oauth/refreshToken`,
   },
+  
 };

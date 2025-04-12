@@ -39,16 +39,16 @@ const CapitalShareholdersTab = ({ formData, updateSection }) => {
   useEffect(() => {
     const dummyMap = {
       transaction: [
-        { label: 'Issue', value: 'issue' },
-        { label: 'Buyback', value: 'buyback' },
+        { label: 'jai', value: 'issue' },
+        { label: 'jai', value: 'buyback' },
       ],
       transactionType: [
         { label: 'Primary', value: 'primary' },
         { label: 'Secondary', value: 'secondary' },
       ],
       shareType: [
-        { label: 'Equity', value: 'equity' },
-        { label: 'Preference', value: 'preference' },
+        { label: 'jai', value: 'equity' },
+        { label: 'jai', value: 'preference' },
       ],
       currency: [
         { label: 'INR', value: 'INR' },
@@ -137,8 +137,8 @@ const CapitalShareholdersTab = ({ formData, updateSection }) => {
         setDependentDropdowns((prev) => ({
           ...prev,
           subscriberType: [
-            { label: 'Default Subscriber A', value: 'sub-a' },
-            { label: 'Default Subscriber B', value: 'sub-b' },
+            { label: 'jai Subscriber A', value: 'sub-a' },
+            { label: 'jai Subscriber B', value: 'sub-b' },
           ],
           shareOwner: [],
         }));
@@ -157,8 +157,8 @@ const CapitalShareholdersTab = ({ formData, updateSection }) => {
         setDependentDropdowns((prev) => ({
           ...prev,
           shareOwner: [
-            { label: 'Default Owner A', value: 'owner-a' },
-            { label: 'Default Owner B', value: 'owner-b' },
+            { label: 'jai Owner A', value: 'owner-a' },
+            { label: 'jai Owner B', value: 'owner-b' },
           ],
         }));
         // }
@@ -262,6 +262,8 @@ const CapitalShareholdersTab = ({ formData, updateSection }) => {
             isRequired={field.isRequired}
             placeholder={`Enter ${field.label}`}
             value={value}
+            multiline={field.key === 'comments'}
+            rows={4}
             onChange={(e) => {
               const inputValue = e.target.value;
               // Allow only numbers and decimal points
@@ -364,7 +366,7 @@ const CapitalShareholdersTab = ({ formData, updateSection }) => {
               item
               xs={12}
               sm={6}
-              md={mdCols}
+              md={field.key === 'comments' ? 6 : mdCols}
               key={field.key}
               sx={{ padding: '15px' }}
             >
@@ -397,100 +399,107 @@ const CapitalShareholdersTab = ({ formData, updateSection }) => {
             </Box>
           </Box>
         )}
-        {(section === 'shareType' ? shareTypeList : shareholderList).filter(
-          (_, idx) =>
-            section === 'shareType'
-              ? idx !== editIndex
-              : idx !== shareholderEditIndex,
-        ).length > 0 && (
-          <Paper
-            elevation={0}
-            sx={{
-              mt: 3,
-              border: '1px solid #D3D3D3',
-              borderRadius: '4px',
-              overflow: 'hidden',
-            }}
-          >
-            <Table size="small">
-              <TableHead>
-                <TableRow sx={{ fontSize: '12px', fontWeight: '600' }}>
-                  {capitalShareFormFields[section]
-                    .filter((field) => field.type !== 'checkbox')
-                    .map((field) => (
-                      <TableCell
-                        key={field.key}
-                        sx={{ border: '1px solid #D3D3D3' }}
-                      >
-                        {field.label}
-                      </TableCell>
-                    ))}
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(section === 'shareType' ? shareTypeList : shareholderList)
-                  .filter((_, idx) =>
-                    section === 'shareType'
-                      ? idx !== editIndex
-                      : idx !== shareholderEditIndex,
-                  )
-                  .map((row, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{ fontSize: '12px', fontWeight: '400' }}
-                    >
-                      {capitalShareFormFields[section]
-                        .filter((field) => field.type !== 'checkbox')
-                        .map((field) => (
-                          <TableCell
-                            key={field.key}
-                            sx={{ border: '1px solid #D3D3D3' }}
-                          >
-                            {row[field.key] || '-'}
-                          </TableCell>
-                        ))}
-                      <TableCell>
-                        <Box
-                          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        {['shareType', 'shareholderType'].includes(section) &&
+          (section === 'shareType' ? shareTypeList : shareholderList).filter(
+            (_, idx) =>
+              section === 'shareType'
+                ? idx !== editIndex
+                : idx !== shareholderEditIndex,
+          ).length > 0 && (
+            <Paper
+              elevation={0}
+              sx={{
+                mt: 3,
+                border: '1px solid #D3D3D3',
+                borderRadius: '4px',
+                overflow: 'hidden',
+              }}
+            >
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ fontSize: '12px', fontWeight: '600' }}>
+                    {capitalShareFormFields[section]
+                      .filter((field) => field.type !== 'checkbox')
+                      .map((field) => (
+                        <TableCell
+                          key={field.key}
+                          sx={{ border: '1px solid #D3D3D3' }}
                         >
-                          <IconButton
-                            onClick={() => handleEdit(section, index)}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => {
-                              const updated = [
-                                ...(section === 'shareType'
-                                  ? shareTypeList
-                                  : shareholderList),
-                              ];
-                              updated.splice(index, 1);
-                              updateSection('capital', {
-                                ...formData.capital,
-                                [`${section}List`]: updated,
-                              });
-                              section === 'shareType'
-                                ? setShareTypeList(updated)
-                                : setShareholderList(updated);
+                          {field.label}
+                        </TableCell>
+                      ))}
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {(section === 'shareType' ? shareTypeList : shareholderList)
+                    .filter((_, idx) =>
+                      section === 'shareType'
+                        ? idx !== editIndex
+                        : idx !== shareholderEditIndex,
+                    )
+                    .map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{ fontSize: '12px', fontWeight: '400' }}
+                      >
+                        {capitalShareFormFields[section]
+                          .filter((field) => field.type !== 'checkbox')
+                          .map((field) => (
+                            <TableCell
+                              key={field.key}
+                              sx={{ border: '1px solid #D3D3D3' }}
+                            >
+                              {row[field.key] || '-'}
+                            </TableCell>
+                          ))}
+                        <TableCell>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 1,
                             }}
                           >
-                            <Box
-                              component="img"
-                              src="/icons/delete.svg"
-                              alt="Delete"
-                              sx={{ width: 20, height: 20 }}
-                            />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </Paper>
-        )}
+                            <IconButton
+                              onClick={() => handleEdit(section, index)}
+                              sx={{outline: 'none !important'}}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => {
+                                const updated = [
+                                  ...(section === 'shareType'
+                                    ? shareTypeList
+                                    : shareholderList),
+                                ];
+                                updated.splice(index, 1);
+                                updateSection('capital', {
+                                  ...formData.capital,
+                                  [`${section}List`]: updated,
+                                });
+                                section === 'shareType'
+                                  ? setShareTypeList(updated)
+                                  : setShareholderList(updated);
+                              }}
+                              sx={{outline: 'none !important'}}
+                            >
+                              <Box
+                                component="img"
+                                src="/icons/delete.svg"
+                                alt="Delete"
+                                sx={{ width: 20, height: 20 }}
+                              />
+                            </IconButton>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          )}
       </Box>
     );
   };

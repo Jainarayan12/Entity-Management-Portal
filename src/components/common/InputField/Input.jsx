@@ -11,6 +11,8 @@ const TextFieldComponent = ({
   disabled,
   labelName,
   isRequired,
+  multiline,
+  rows
 }) => {
   return (
     <>
@@ -36,6 +38,8 @@ const TextFieldComponent = ({
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
+        multiline={multiline}
+        rows={rows}
         sx={{
           background: disabled ? '#E9E9E9' : '#fff',
           '& .MuiOutlinedInput-root': {
@@ -64,12 +68,16 @@ TextFieldComponent.propTypes = {
   disabled: PropTypes.bool,
   labelName: PropTypes.string,
   isRequired: PropTypes.bool,
+  multiline:PropTypes.bool,
+  rows:PropTypes.number
 };
 
 TextFieldComponent.defaultProps = {
   value: '',
   placeholder: '',
   disabled: false,
+  multiline:false,
+  rows:1,
 };
 
 export default React.memo(TextFieldComponent);

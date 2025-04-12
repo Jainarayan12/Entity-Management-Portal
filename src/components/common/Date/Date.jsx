@@ -36,6 +36,7 @@ const DateField = ({
             size: 'small',
             fullWidth: true,
             sx: {
+              outline: 'none !important',
               background: disabled ? '#E9E9E9' : '#fff',
               '& .MuiOutlinedInput-root': {
                 fontSize: '14px',
@@ -48,7 +49,9 @@ const DateField = ({
                 '&.Mui-focused fieldset': {
                   borderColor: '#9E9E9E',
                 },
-                outline: 'none !important',
+                '.MuiIconButton-edgeEnd': {
+                  outline: 'none !important',
+                },
               },
             },
           },
