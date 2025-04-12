@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   IconButton,
+  Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
@@ -19,6 +20,7 @@ const ConfirmDialog = ({
   description,
   confirmText,
   cancelText,
+  note,
 }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -27,16 +29,25 @@ const ConfirmDialog = ({
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           {title || 'Confirm Deletion'}
         </Typography>
-        <IconButton onClick={onClose} size="small" outline= 'none !important'>
+        <IconButton onClick={onClose} size="small" outline="none !important">
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
 
       <DialogContent>
         <Typography sx={{ fontSize: '14px', color: '#2E2D2C' }}>
-          {description ||
-            'This action is permanent and may affect related records. Are you sure you want to proceed?'}
+          {description}
         </Typography>
+        {note && (
+          <Box mt={2}>
+            <Typography
+              variant="body2"
+              sx={{ fontSize: '12px', fontStyle: 'italic', color: '#6A6A6A' }}
+            >
+              <strong>Note:</strong> {note}
+            </Typography>
+          </Box>
+        )}
       </DialogContent>
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -68,6 +79,7 @@ ConfirmDialog.propTypes = {
   description: PropTypes.string,
   confirmText: PropTypes.string,
   cancelText: PropTypes.string,
+  note: PropTypes.string,
 };
 
 export default ConfirmDialog;

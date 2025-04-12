@@ -175,8 +175,15 @@ const DocumentsTab = ({ formData, updateSection }) => {
         toastError(`${file.name} already uploaded.`);
         return false;
       }
-      if (file.type !== 'application/pdf') {
-        toastError(`${file.name} is not a PDF.`);
+      const allowedTypes = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/plain',
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        toastError(`${file.name} is not a supported format.`);
         return false;
       }
       return true;
@@ -416,7 +423,7 @@ const DocumentsTab = ({ formData, updateSection }) => {
                 id={`file-input-${index}`}
                 type="file"
                 multiple
-                accept=".pdf"
+                accept=".pdf,.docx,.xlsx,.txt"
                 style={{ display: 'none' }}
                 onChange={(e) => handleFileUpload(e, index)}
               />
