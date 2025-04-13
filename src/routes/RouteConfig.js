@@ -1,6 +1,5 @@
 import React from 'react';
 import Dashboard from '../components/pages/Dashboard/Dashboard';
-
 const LandingPage = React.lazy(
   () => import('../components/pages/Home/HomePage'),
 );
@@ -9,10 +8,11 @@ const EntityCreation = React.lazy(
   () => import('../components/pages/Dashboard/CreateEntity/EntityCreation'),
 );
 
-const LoginPage = React.lazy(
-  () => import('../components/pages/Home/Login'),
-);
+const LoginPage = React.lazy(() => import('../components/pages/Home/Login'));
 
+const EditEntity = React.lazy(
+  () => import('../components/pages/Dashboard/EditEntity/EditEntity'),
+);
 
 const routeConfigs = [
   {
@@ -38,6 +38,12 @@ const routeConfigs = [
     path: '/create-entity',
     auth: false,
     component: EntityCreation,
+  },
+  {
+    key: 'Edit_ENTITY',
+    path: '/edit-entity',
+    auth: false,
+    component: EditEntity,
   },
 ];
 export default routeConfigs;
