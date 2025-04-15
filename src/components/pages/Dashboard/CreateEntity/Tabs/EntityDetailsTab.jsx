@@ -14,24 +14,29 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
 
   const sections = [
     {
+      key: 'entityDetails', // matches the nested object key in formData
       title: 'Entity Details',
-      fields: entityFormFields.entityDetails || [],
+      fields: entityFormFields.entityDetails,
     },
     {
+      key: 'location',
       title: 'Location',
-      fields: entityFormFields.location || [],
+      fields: entityFormFields.location,
     },
     {
+      key: 'organization',
       title: 'Organization',
-      fields: entityFormFields.organization || [],
+      fields: entityFormFields.organization,
     },
     {
+      key: 'shareCertificate',
       title: 'Share Certificate',
-      fields: entityFormFields.shareCertificate || [],
+      fields: entityFormFields.shareCertificate,
     },
     {
+      key: 'taxAudit',
       title: 'Tax & Audit',
-      fields: entityFormFields.taxAudit || [],
+      fields: entityFormFields.taxAudit,
     },
   ];
 
@@ -128,15 +133,15 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
   //   fetchDropdowns();
   // }, []);
 
-  const handleChange = (subSectionKey, key, value) => {
+  const handleChange = (sectionKey, fieldKey, value) => {
     updateSection('entityDetails', {
       ...formData.entityDetails,
-      [subSectionKey]: {
-        ...formData.entityDetails[subSectionKey],
-        [key]: value,
+      [sectionKey]: {
+        ...formData.entityDetails[sectionKey],
+        [fieldKey]: value,
       },
     });
-  };
+  }
 
   const renderField = (field, subSectionKey) => {
     const value = formData?.entityDetails?.[subSectionKey]?.[field.key] || '';
@@ -180,7 +185,7 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             isRequired={field.isRequired}
             label=""
             value={
-              formData?.entityDetails?.[subSectionKey]?.[field.key]
+              formData.entityDetails[subSectionKey][field.key]
                 ? dayjs(formData.entityDetails[subSectionKey][field.key])
                 : null
             }
@@ -210,18 +215,14 @@ const EntityDetailsTab = ({ formData, updateSection }) => {
             </Typography>
             <Box sx={{ flex: 1, borderBottom: '2px dotted #2E2D2C' }} />
           </Box>
-          {Object.entries(entityFormFields).map(([subSectionKey, fields]) => (
-            <Box key={subSectionKey}>
-              <Typography>{subSectionKey}</Typography>
-              <Grid container spacing={2}>
-                {fields.map((field) => (
-                  <Grid item xs={12} sm={6} md={4} key={field.key}>
-                    {renderField(field, subSectionKey)}
-                  </Grid>
-                ))}
+
+          <Grid container spacing={2}>
+            {section.fields.map((field) => (
+              <Grid item xs={12} sm={6} md={4} key={field.key}>
+                {renderField(field, section.key)}
               </Grid>
-            </Box>
-          ))}
+            ))}
+          </Grid>
         </Box>
       ))}
     </Box>

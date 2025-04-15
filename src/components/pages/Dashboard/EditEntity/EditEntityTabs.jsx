@@ -1,10 +1,9 @@
 import { Box, Tabs, Tab } from '@mui/material';
 import PropTypes from 'prop-types';
 import EditEntityDetailsTab from './Tabs/EditEntityDetailsTab';
-// import EntityDetailsTab from './Tabs/EntityDetailsTab';
-// import DirectorshipTab from './Tabs/DirectorshipTab';
-// import OwnershipTab from './Tabs/OwnershipTab';
-// import CapitalShareholdersTab from './Tabs/CapitalShareholdersTab';
+import DirectorshipTab from './Tabs/DirectorshipTab';
+import OwnershipTab from './Tabs/OwnershipTab';
+import CapitalShareholdersTabs from './Tabs/CapitalShareholdersTab';
 import React from 'react';
 import entityIconActive from '../../../../assets/images/entitydetailsblack.svg';
 import entityIconInactive from '../../../../assets/images/entitydetailsgrey.svg';
@@ -53,12 +52,12 @@ const EditEntityTabs = ({ entityData }) => {
     switch (tabConfig[tabIndex].key) {
       case 'entityDetails':
         return <EditEntityDetailsTab data={entityData?.entityDetails} />;
-    //   case 'directorship':
-    //     return <DirectorshipTab data={entityData?.directorship} />;
-    //   case 'ownership':
-    //     return <OwnershipTab data={entityData?.ownership} />;
-    //   case 'capital':
-    //     return <CapitalShareholdersTab data={entityData?.capital} />;
+      case 'directorship':
+        return <DirectorshipTab data={entityData?.directorship} />;
+      case 'ownership':
+        return <OwnershipTab data={entityData?.ownership} />;
+      case 'capital':
+        return <CapitalShareholdersTabs data={entityData?.capital} />;
       default:
         return null;
     }

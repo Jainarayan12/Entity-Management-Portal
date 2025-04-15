@@ -22,10 +22,10 @@ const AddressTab = ({ formData, updateSection }) => {
       //   const res = await get('/dropdown/countries/registered');
       //   setRegisteredCountries(res?.data || []);
       // } catch {
-        setRegisteredCountries([
-          { id: 'IN', name: 'India (Reg)' },
-          { id: 'UK', name: 'UK (Reg)' },
-        ]);
+      setRegisteredCountries([
+        { id: 'IN', name: 'India (Reg)' },
+        { id: 'UK', name: 'UK (Reg)' },
+      ]);
       // }
     };
 
@@ -34,10 +34,10 @@ const AddressTab = ({ formData, updateSection }) => {
       //   const res = await get('/dropdown/countries/operating');
       //   setOperatingCountries(res?.data || []);
       // } catch {
-        setOperatingCountries([
-          { id: 'US', name: 'USA (Ops)' },
-          { id: 'CA', name: 'Canada (Ops)' },
-        ]);
+      setOperatingCountries([
+        { id: 'US', name: 'USA (Ops)' },
+        { id: 'CA', name: 'Canada (Ops)' },
+      ]);
       // }
     };
 
@@ -46,10 +46,10 @@ const AddressTab = ({ formData, updateSection }) => {
       //   const res = await get('/dropdown/countries/additional');
       //   setAdditionalCountries(res?.data || []);
       // } catch {
-        setAdditionalCountries([
-          { id: 'DE', name: 'Germany (Add)' },
-          { id: 'FR', name: 'France (Add)' },
-        ]);
+      setAdditionalCountries([
+        { id: 'DE', name: 'Germany (Add)' },
+        { id: 'FR', name: 'France (Add)' },
+      ]);
       // }
     };
 
@@ -110,8 +110,6 @@ const AddressTab = ({ formData, updateSection }) => {
         Add an address
       </Typography>
       <Grid container spacing={2}>
-        {/* Event Date */}
-
         <Grid item xs={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
@@ -131,8 +129,6 @@ const AddressTab = ({ formData, updateSection }) => {
             </Grid>
           </Grid>
         </Grid>
-
-        {/* Registered Address */}
         <Grid item xs={12} sm={6}>
           <Input
             label=""
@@ -153,7 +149,6 @@ const AddressTab = ({ formData, updateSection }) => {
           />
         </Grid>
 
-        {/* Operating Address */}
         <Grid item xs={12} sm={6}>
           <Input
             label=""

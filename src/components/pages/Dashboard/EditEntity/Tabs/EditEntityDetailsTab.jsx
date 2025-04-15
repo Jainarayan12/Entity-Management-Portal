@@ -1,4 +1,4 @@
-import { Box, Typography, IconButton, Button, Divider } from '@mui/material';
+import { Box, Typography, IconButton, Button } from '@mui/material';
 // import EntitySubTabs from './EntitySubTabs';
 import PropTypes from 'prop-types';
 import editIcon from '../../../../../assets/images/editIcon.svg';
@@ -7,8 +7,10 @@ import viewLogIcon from '../../../../../assets/images/viewLogIcon.svg';
 import reportIcon from '../../../../../assets/images/reportIcon.svg';
 import EntityDetailsSubtabs from '../EntityDetailsSubtabs';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const EditEntityDetailsTab = ({ data }) => {
+  const navigate = useNavigate();
   const [activeSubTab, setActiveSubTab] = useState(0);
   const entityInfo = data?.entityDetails?.entityDetails || {};
   const locationInfo = data?.entityDetails?.location || {};
@@ -19,7 +21,7 @@ const EditEntityDetailsTab = ({ data }) => {
     { label: 'Company Type', value: entityInfo.companyType, isRequired: true },
   ];
 
-  const fields=[
+  const fields = [
     {
       eventDate: '28/02/2021',
       entity: 'jai',
@@ -32,17 +34,17 @@ const EditEntityDetailsTab = ({ data }) => {
       expiryDate: '01/02/222',
     },
     {
-        eventDate: '28/02/2021',
-        entity: 'jai',
-        documentTitle: 'jai',
-        documentCategory: 'jai',
-        documentType: 'jai',
-        author: 'jai',
-        documentStatus: 'Approved',
-        version: '1.2',
-        expiryDate: '01/02/222',
+      eventDate: '28/02/2021',
+      entity: 'jai',
+      documentTitle: 'jai',
+      documentCategory: 'jai',
+      documentType: 'jai',
+      author: 'jai',
+      documentStatus: 'Approved',
+      version: '1.2',
+      expiryDate: '01/02/222',
     },
-  ]
+  ];
 
   const locationFields = [
     { label: 'Country', value: locationInfo.country, isRequired: true },
@@ -52,12 +54,13 @@ const EditEntityDetailsTab = ({ data }) => {
       isRequired: false,
     },
   ];
+  
   return (
     <>
       <Box
         sx={{
           boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.04)',
-          padding: '15px',
+          padding: '24px',
           background: '#FFF',
           marginBottom: '20px',
         }}
@@ -79,8 +82,13 @@ const EditEntityDetailsTab = ({ data }) => {
             <IconButton size="small">
               <Box component="img" src={historyIcon} alt="History" />
             </IconButton>
-            <IconButton size="small">
-              <Box component="img" src={viewLogIcon} alt="View Log" />
+            <IconButton
+              size="small"
+              onClick={() => {
+                navigate('/view-request-status');
+              }}
+            >
+              <Box component="img" src={viewLogIcon} alt="request" />
             </IconButton>
 
             <Button
@@ -100,11 +108,6 @@ const EditEntityDetailsTab = ({ data }) => {
             </Button>
           </Box>
         </Box>
-
-        <Typography variant="subtitle1" fontWeight={600} fontSize="16px" mb={2}>
-          Entity Name
-        </Typography>
-
         <Box
           display="flex"
           flexWrap="wrap"
@@ -113,20 +116,20 @@ const EditEntityDetailsTab = ({ data }) => {
           flexDirection="column"
         >
           <Box display="flex" alignItems="center" gap={1}>
-            <Typography fontSize="14px" color="#777">
-              Entity Id:
+            <Typography fontSize="14px" color="#777" minWidth="180px">
+              Entity Id
             </Typography>
             <Typography fontWeight={600}>{data?.entityId || '--'}</Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={1}>
-            <Typography fontSize="14px" color="#777">
-              Legal Name:
+            <Typography fontSize="14px" color="#777" minWidth="180px">
+              Legal Name
             </Typography>
             <Typography fontWeight={600}>{data?.legalName || '--'}</Typography>
           </Box>
           <Box display="flex" alignItems="center" gap={1}>
-            <Typography fontSize="14px" color="#777">
-              Company Type:
+            <Typography fontSize="14px" color="#777" minWidth="180px">
+              Company Type
             </Typography>
             <Typography fontWeight={600}>
               {data?.companyType || '--'}
@@ -137,7 +140,7 @@ const EditEntityDetailsTab = ({ data }) => {
       <Box
         sx={{
           boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.04)',
-          padding: '15px',
+          padding: '24px',
           background: '#FFF',
         }}
       >

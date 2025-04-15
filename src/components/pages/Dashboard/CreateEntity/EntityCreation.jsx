@@ -119,7 +119,7 @@ const EntityCreation = () => {
   };
 
   const handleSaveDraft = () => {
-    console.log('Saving draft:', formData.documents);
+    console.log('Saving draft:', formData);
     if (isAnyUploadIncomplete()) {
       toastError(
         'documents are not fully uploaded delete and reupload them again',

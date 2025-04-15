@@ -1,21 +1,20 @@
 import PropTypes from 'prop-types';
-import {
-  Box,
-  Typography,
-  Select,
-  MenuItem,
-  Pagination,
-} from '@mui/material';
+import { Box, Select, MenuItem, Typography, Pagination } from '@mui/material';
 
 const CustomPagination = ({
+  data,
   page,
   rowsPerPage,
-  onRowsPerPageChange,
   onPageChange,
+  onRowsPerPageChange,
   totalRecords,
-  startIndex,
-  endIndex,
+  label = 'Rows Per Page',
 }) => {
+  if (!data || data.length === 0) return null;
+
+  const startIndex = (page - 1) * rowsPerPage + 1;
+  const endIndex = Math.min(page * rowsPerPage, totalRecords);
+
   return (
     <Box
       sx={{
@@ -25,7 +24,9 @@ const CustomPagination = ({
         marginTop: '20px',
       }}
     >
+      {' '}
       <Box display="flex" alignItems="center">
+        {' '}
         <Typography
           variant="body2"
           sx={{
@@ -35,8 +36,9 @@ const CustomPagination = ({
             fontSize: '12px',
           }}
         >
-          Rows per page:
-        </Typography>
+          {' '}
+          {label}:{' '}
+        </Typography>{' '}
         <Select
           value={rowsPerPage}
           onChange={onRowsPerPageChange}
@@ -54,26 +56,22 @@ const CustomPagination = ({
               borderRadius: '0px',
               textAlign: 'center',
             },
-            '& .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            },
+            '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
             '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
               border: 'none',
             },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              border: 'none',
-            },
-            '& .MuiSelect-icon.MuiSelect-iconOutlined': {
-              right: '-5px',
-            },
+            '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+            '& .MuiSelect-icon.MuiSelect-iconOutlined': { right: '-5px' },
           }}
         >
+          {' '}
           {[10, 20, 50].map((rows) => (
             <MenuItem key={rows} value={rows} sx={{ textAlign: 'center' }}>
-              {rows}
+              {' '}
+              {rows}{' '}
             </MenuItem>
-          ))}
-        </Select>
+          ))}{' '}
+        </Select>{' '}
         <Typography
           variant="body2"
           sx={{
@@ -83,10 +81,10 @@ const CustomPagination = ({
             fontSize: '12px',
           }}
         >
-          {startIndex}-{endIndex} of {totalRecords}
-        </Typography>
+          {' '}
+          {startIndex}-{endIndex} of {totalRecords}{' '}
+        </Typography>{' '}
       </Box>
-
       <Pagination
         count={Math.ceil(totalRecords / rowsPerPage)}
         page={page}
@@ -108,14 +106,13 @@ const CustomPagination = ({
 };
 
 CustomPagination.propTypes = {
-  count: PropTypes.number.isRequired,
+  data: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
-  totalRecords: PropTypes.number.isRequired,
-  startIndex: PropTypes.number.isRequired,
-  endIndex: PropTypes.number.isRequired,
-  onRowsPerPageChange: PropTypes.func.isRequired,
   onPageChange: PropTypes.func.isRequired,
+  onRowsPerPageChange: PropTypes.func.isRequired,
+  totalRecords: PropTypes.number.isRequired,
+  label: PropTypes.string,
 };
 
 export default CustomPagination;

@@ -52,7 +52,6 @@ const StaticFieldDisplay = ({ sectionKey, fields }) => {
               <TableCell
                 sx={{
                   fontWeight: 600,
-                  border: '1px solid #ddd',
                   backgroundColor: '#f9f9f9',
                 }}
               >
@@ -68,7 +67,7 @@ const StaticFieldDisplay = ({ sectionKey, fields }) => {
                     {row[key] || '--'}
                   </TableCell>
                 ))}
-                <TableCell sx={{ border: '1px solid #ddd' }}>
+                <TableCell >
                   <Box display="flex" gap={2}>
                     <IconButton
                       sx={{ padding: '0', outline: 'none !important' }}

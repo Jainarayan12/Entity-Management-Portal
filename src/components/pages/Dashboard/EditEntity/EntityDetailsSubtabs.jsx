@@ -12,7 +12,7 @@ const entitySubTabConfig = [
 ];
 
 const EntityDetailsSubtabs = ({ activeSubTab, setActiveSubTab, formData }) => {
-    console.log("formda",formData)
+  console.log('formda', formData);
   const handleChange = (event, newValue) => setActiveSubTab(newValue);
 
   return (
@@ -35,7 +35,10 @@ const EntityDetailsSubtabs = ({ activeSubTab, setActiveSubTab, formData }) => {
               textTransform: 'capitalize',
               fontWeight: index === activeSubTab ? 600 : 400,
               fontSize: '14px',
-              color: index === activeSubTab ? '#2E2D2C !important' : 'rgba(0, 0, 0, 0.54)',
+              color:
+                index === activeSubTab
+                  ? '#2E2D2C !important'
+                  : 'rgba(0, 0, 0, 0.54)',
               outline: 'none !important',
             }}
           />
@@ -43,7 +46,11 @@ const EntityDetailsSubtabs = ({ activeSubTab, setActiveSubTab, formData }) => {
       </Tabs>
 
       <Box mt={2}>
-        <Typography sx={{fontSize:'20px',fontWeight:'600',marginBottom:'12px'}}>{entitySubTabConfig[activeSubTab].label}</Typography>
+        <Typography
+          sx={{ fontSize: '20px', fontWeight: '600', marginBottom: '12px' }}
+        >
+          {entitySubTabConfig[activeSubTab].label}
+        </Typography>
         <StaticFieldDisplay
           sectionKey={entitySubTabConfig[activeSubTab].key}
           fields={formData}

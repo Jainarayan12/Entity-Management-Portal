@@ -1,7 +1,17 @@
 import React from 'react';
 import Dashboard from '../components/pages/Dashboard/Dashboard';
+
+
 const LandingPage = React.lazy(
   () => import('../components/pages/Home/HomePage'),
+);
+
+const ViewRequest = React.lazy(
+  () => import('../components/pages/Dashboard/EditEntity/viewRequest'),
+);
+
+const ViewRequestStatus = React.lazy(
+  () => import('../components/pages/Dashboard/EditEntity/ViewRequestStatus'),
 );
 
 const EntityCreation = React.lazy(
@@ -44,6 +54,18 @@ const routeConfigs = [
     path: '/edit-entity',
     auth: false,
     component: EditEntity,
+  },
+  {
+    key: 'VIEW_REQUEST_STATUS',
+    path: '/view-request-status',
+    auth: false,
+    component: ViewRequestStatus,
+  },
+  {
+    key: 'VIEW_REQUEST',
+    path: '/view-request',
+    auth: false,
+    component: ViewRequest,
   },
 ];
 export default routeConfigs;
