@@ -76,7 +76,9 @@ const EditEntityDetailsTab = ({ data }) => {
           </Typography>
 
           <Box display="flex" alignItems="center" gap={1}>
-            <IconButton size="small">
+            <IconButton size="small"  onClick={() => {
+                navigate('/entity-details');
+              }}>
               <Box component="img" src={editIcon} alt="Edit" />
             </IconButton>
             <IconButton size="small">

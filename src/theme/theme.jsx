@@ -6,6 +6,20 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          outline: 'none !important',
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          outline: 'none !important',
+        },
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
         input: {

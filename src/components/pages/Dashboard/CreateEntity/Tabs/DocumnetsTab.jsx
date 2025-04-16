@@ -12,12 +12,13 @@ import useApi from '../../../../../core/api-service/useApi';
 import upload from '../../../../../assets/images/upload-icon.svg';
 import Tooltip from '@mui/material/Tooltip';
 import successicon from '../../../../../assets/images/success.svg';
+import pdf from '../../../../../assets/images/excel.png';
 import close from '../../../../../assets/images/close.svg';
 import ConfirmDialog from '../../../../common/Modal/ModalComponent';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 
-const DocumentsTab = ({ formData, updateSection }) => {
+const DocumentsTab = ({ formData, updateSection, isDisplay }) => {
   const [dropdownOptions, setDropdownOptions] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTicketIndex, setDeleteTicketIndex] = useState({
@@ -86,7 +87,6 @@ const DocumentsTab = ({ formData, updateSection }) => {
     injectDummyDropdowns();
   }, []);
 
-  // Uncomment this block if your fields contain apiEndpoint keys
   /*
   useEffect(() => {
     const fetchDropdowns = async () => {
@@ -359,29 +359,31 @@ const DocumentsTab = ({ formData, updateSection }) => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Typography variant="h6" fontWeight={600} fontSize="20px">
-          Add Documents
-        </Typography>
-        <Button
-          onClick={handleAddSection}
-          sx={{
-            mt: 1,
-            textTransform: 'capitalize',
-            color: '#FF7000',
-            fontWeight: '600',
-            outline: 'none !important',
-          }}
-        >
-          <Box
-            component="img"
-            src={addCircle}
-            alt="scope"
-            sx={{ width: 24, height: 24, marginRight: '5px' }}
-          />
-          Add Additional Documents
-        </Button>
-      </Box>
+      {isDisplay && (
+        <Box display="flex" justifyContent="space-between" mb={2}>
+          <Typography variant="h6" fontWeight={600} fontSize="20px">
+            Add Documents
+          </Typography>
+          <Button
+            onClick={handleAddSection}
+            sx={{
+              mt: 1,
+              textTransform: 'capitalize',
+              color: '#FF7000',
+              fontWeight: '600',
+              outline: 'none !important',
+            }}
+          >
+            <Box
+              component="img"
+              src={addCircle}
+              alt="scope"
+              sx={{ width: 24, height: 24, marginRight: '5px' }}
+            />
+            Add Additional Documents
+          </Button>
+        </Box>
+      )}
       {documentSections.map((section, index) => (
         <Box key={section.id} sx={{ borderRadius: 2, p: 2, mb: 3 }}>
           <Grid container spacing={2}>
@@ -446,7 +448,7 @@ const DocumentsTab = ({ formData, updateSection }) => {
                     justifyContent: 'end',
                   }}
                 >
-                  <Box component="img" src={''} alt="pdf" marginLeft="10px" />
+                  <Box component="img" src={pdf} alt="pdf" marginLeft="10px" />
                   <Box
                     sx={{
                       display: 'flex',
@@ -540,7 +542,7 @@ const DocumentsTab = ({ formData, updateSection }) => {
                       open={isModalOpen}
                       onClose={() => setIsModalOpen(false)}
                       onConfirm={handleFileRemove}
-                      title=" Delete"
+                      title="Confirm Deletion"
                       description="Are you sure you want to delete this document? This action cannot be undone."
                       confirmText="Delete Document"
                       cancelText="Cancel"
@@ -559,6 +561,11 @@ const DocumentsTab = ({ formData, updateSection }) => {
 DocumentsTab.propTypes = {
   formData: PropTypes.object.isRequired,
   updateSection: PropTypes.func.isRequired,
+  isDisplay: PropTypes.bool,
+};
+
+DocumentsTab.defaultProps = {
+  isDisplay: true,
 };
 
 export default DocumentsTab;

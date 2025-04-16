@@ -19,6 +19,7 @@ import sentBack from '../../../../assets/images/sentBack.svg';
 import greenDot from '../../../../assets/images/greenDot.svg';
 import eyeIcon from '../../../../assets/images/eye.svg';
 import back from '../../../../assets/images/arrow-left.svg';
+import { useNavigate } from 'react-router-dom';
 
 const dummyData = [
   {
@@ -79,7 +80,7 @@ const tabOptions = [
 export default function ViewRequestStatus() {
   const [tab, setTab] = useState('All');
   const [rows, setRows] = useState([]);
-
+  const navigate = useNavigate();
   const fetchData = (status) => {
     let filtered = [...dummyData];
     if (status !== 'All') {
@@ -155,8 +156,9 @@ export default function ViewRequestStatus() {
                 border: '1px solid #2E2D2C',
               },
             }}
+            onClick={()=>{navigate('/view-request')}}
           >
-            <Box component="img" src={eyeIcon} alt="Approved" /> View
+            <Box component="img" src={eyeIcon} alt="Approved"  /> View
           </Button>
         </Box>
       </Box>
@@ -164,7 +166,7 @@ export default function ViewRequestStatus() {
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead backgroundColor="#F8F9FA">
-            <TableRow >
+            <TableRow>
               <TableCell
                 sx={{
                   ...commonCellStyle,
@@ -293,6 +295,9 @@ export default function ViewRequestStatus() {
               variant="text"
               color="inherit"
               sx={{ textTransform: 'capitalize', outline: 'none !important' }}
+              onClick={() => {
+                navigate('/edit-entity');
+              }}
             >
               Cancel
             </Button>
@@ -304,6 +309,9 @@ export default function ViewRequestStatus() {
               gap="5px"
               padding="0 10px"
               border="1px solid #2E2D2C"
+              onClick={() => {
+                navigate('/edit-entity');
+              }}
             >
               <Box
                 component="img"
@@ -325,6 +333,9 @@ export default function ViewRequestStatus() {
                 '&:hover': {
                   background: '#FF7000',
                 },
+              }}
+              onClick={() => {
+                navigate('/entity-details');
               }}
             >
               Modify & Resubmit

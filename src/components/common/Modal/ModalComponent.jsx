@@ -10,7 +10,7 @@ import {
   Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import rejected from '../../../assets/images/rejected_logo.svg';
 
 const ConfirmDialog = ({
   open,
@@ -25,9 +25,9 @@ const ConfirmDialog = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <WarningAmberRoundedIcon sx={{ color: '#FF7000' }} />
+        <Box component="img" src={rejected} alt="rejected" />
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          {title || 'Confirm Deletion'}
+          {title}
         </Typography>
         <IconButton onClick={onClose} size="small" outline="none !important">
           <CloseIcon fontSize="small" />
@@ -42,9 +42,9 @@ const ConfirmDialog = ({
           <Box mt={2}>
             <Typography
               variant="body2"
-              sx={{ fontSize: '12px', fontStyle: 'italic', color: '#6A6A6A' }}
+              sx={{ fontSize: '14px', color: '#2E2D2C' }}
             >
-              <strong>Note:</strong> {note}
+              {note}
             </Typography>
           </Box>
         )}
@@ -54,17 +54,23 @@ const ConfirmDialog = ({
         <Button
           onClick={onClose}
           variant="outlined"
-          sx={{ textTransform: 'capitalize', minWidth: 100 }}
+          sx={{
+            textTransform: 'capitalize',
+            minWidth: 100,
+            color: '#2E2D2C',
+            border: '1px solid #2E2D2C',
+            fontWeight: '600',
+          }}
         >
-          {cancelText || 'Cancel'}
+          {cancelText }
         </Button>
         <Button
           onClick={onConfirm}
           variant="contained"
           color="warning"
-          sx={{ textTransform: 'capitalize', minWidth: 140 }}
+          sx={{ textTransform: 'capitalize', minWidth: 140, fontWeight: '600' }}
         >
-          {confirmText || 'Delete Entity'}
+          {confirmText }
         </Button>
       </DialogActions>
     </Dialog>

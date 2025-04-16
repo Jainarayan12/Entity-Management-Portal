@@ -13,12 +13,13 @@ import {
   Paper,
 } from '@mui/material';
 import greenDot from '../../../../assets/images/greenDot.svg';
+import { useNavigate } from 'react-router-dom';
 
 const commonCellStyle = {
   border: '1px solid #ccc',
   fontWeight: 600,
   whiteSpace: 'nowrap',
-  backgroundColor:'#F8F9FA'
+  backgroundColor: '#F8F9FA',
 };
 
 const dummyData = [
@@ -78,7 +79,7 @@ const dummyData = [
 
 export default function ViewRequest() {
   const [rows, setRows] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setTimeout(() => {
       setRows(dummyData);
@@ -226,7 +227,13 @@ export default function ViewRequest() {
           zIndex: 1200,
         }}
       >
-        <Button variant="contained" color="warning">
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={() => {
+            navigate('/view-request-status');
+          }}
+        >
           Ok
         </Button>
       </Box>

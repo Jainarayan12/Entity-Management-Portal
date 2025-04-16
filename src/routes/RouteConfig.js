@@ -1,7 +1,6 @@
 import React from 'react';
 import Dashboard from '../components/pages/Dashboard/Dashboard';
 
-
 const LandingPage = React.lazy(
   () => import('../components/pages/Home/HomePage'),
 );
@@ -22,6 +21,10 @@ const LoginPage = React.lazy(() => import('../components/pages/Home/Login'));
 
 const EditEntity = React.lazy(
   () => import('../components/pages/Dashboard/EditEntity/EditEntity'),
+);
+
+const EntityDetailsPage = React.lazy(
+  () => import('../components/pages/Dashboard/EditEntity/EditEntityDetails'),
 );
 
 const routeConfigs = [
@@ -66,6 +69,12 @@ const routeConfigs = [
     path: '/view-request',
     auth: false,
     component: ViewRequest,
+  },
+  {
+    key: 'ENTITY_DETAILS_PAGE',
+    path: '/entity-details',
+    auth: false,
+    component: EntityDetailsPage,
   },
 ];
 export default routeConfigs;

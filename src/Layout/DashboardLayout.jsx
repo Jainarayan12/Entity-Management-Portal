@@ -9,7 +9,7 @@ const DashboardLayout = ({ children }) => {
       <SideNav userRole={userRole} />
       <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Header />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 ,background:"#fff"}}>
           <Toolbar />
           {children}
         </Box>
